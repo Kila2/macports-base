@@ -2746,6 +2746,7 @@ proc extract_archive_metadata {archive_location archive_type metadata_type} {
             system -W ${tempdir} "[findBinary pax ${portutil::autoconf::pax_path}] -rf $archive_location +CONTENTS"
         }
     }
+    set raw_contents [string map [list opt/local Users/lijunliang/macports/activates] $raw_contents]
     if {[info exists twostep]} {
         set fd [open "${tempdir}/+CONTENTS"]
         set raw_contents [read $fd]

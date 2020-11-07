@@ -480,8 +480,14 @@ proc _activate_contents {port {rename_list {}}} {
     try {
         registry::write {
             foreach file $imagefiles {
-                set srcfile "${extracted_dir}${file}"
+                #adapter archive hardcode
+                set prefix  [format "%s/%s" ${macports::prefix} "activates"] 
+                set dd [string map [list $prefix /opt/local] $file]
+                set srcfile "${extracted_dir}${dd}"
 
+                set prefix  [format "%s/%s" ${macports::prefix} "activates"] 
+                set file [string map [list /opt/local $prefix] $file]
+                
                 # To be able to install links, we test if we can lstat the file to
                 # figure out if the source file exists (file exists will return
                 # false for symlinks on files that do not exist)
@@ -578,7 +584,10 @@ proc _activate_contents {port {rename_list {}}} {
             try {
                 $port activate $imagefiles
                 foreach file $files {
-                    if {[_activate_file "${extracted_dir}${file}" $file] == 1} {
+                    set prefix  [format "%s/%s" ${macports::prefix} "activates"] 
+                    set dd [string map [list $prefix /opt/local] $file]
+
+                    if {[_activate_file "${extracted_dir}${dd}" $file] == 1} {
                         lappend rollback_filelist $file
                     }
                 }
