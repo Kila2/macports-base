@@ -663,6 +663,22 @@ proc _activate_contents {port {rename_list {}}} {
         ::file delete -force $extracted_dir
         throw
     }
+    foreach {linkfile} $rollback_filelist {
+        if {[catch {::file type $linkfile} filetype]} {
+            ui_debug "$linkfile does not exist"
+        } elseif { [::file type $linkfile] eq "link" } {
+            ui_debug hello444
+            set link [file readlink $linkfile]
+            set prefix  [format "%s/%s" ${macports::prefix} "activates"] 
+            set dd [string map [list /opt/local $prefix] $link]
+            ui_debug $linkfile
+            ui_debug $dd
+            file delete $linkfile
+            file link -symbolic $linkfile $dd
+            ui_debug "ln -sf $dd $linkfile"
+            ui_debug [file readlink $linkfile]
+        }
+    }
     ::file delete -force $extracted_dir
 }
 
